@@ -9,9 +9,20 @@
   line-height: 1.5;
   font-weight: 400;
 
+  /* Refined Dark Color Scheme */
+  --color-bg: #0a0a0f;
+  --color-surface: #1a1a24;
+  --color-surface-elevated: #25253a;
+  --color-border: #3a3a4f;
+  --color-accent: #7c3aed;
+  --color-accent-hover: #9b5ef8;
+  --color-text-primary: #e5e7eb;
+  --color-text-secondary: #9ca3af;
+  --color-glow: rgba(124, 58, 237, 0.3);
+
   color-scheme: dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #0a0a0a;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;

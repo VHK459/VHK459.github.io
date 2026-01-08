@@ -173,7 +173,16 @@ const BlackHoleSimulation = () => {
     
     const camera = new THREE.PerspectiveCamera(90, width / height, 1, 8000);
     const renderer = new THREE.WebGLRenderer();
-    renderer.setPixelRatio(0.6); // Limit pixel ratio for performance
+    const aspect = width / height;
+    console.log(aspect);
+    if (aspect < 1.0) {
+      renderer.setPixelRatio( 0.9);
+    }
+    else {
+      renderer.setPixelRatio(0.6)
+    }
+
+    // renderer.setPixelRatio(0.6); // Limit pixel ratio for performance
     renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
 
@@ -339,7 +348,7 @@ const BlackHoleSimulation = () => {
         uniforms.cam_vel.value.copy(observer.velocity);
         
         const e = observer.orientation.elements;
-        console.log(e)
+        // console.log(e)
         uniforms.cam_x.value.set(e[0], e[1], e[2]);
         uniforms.cam_y.value.set(e[3], e[4], e[5]);
         uniforms.cam_z.value.set(e[6], e[7], e[8]);
