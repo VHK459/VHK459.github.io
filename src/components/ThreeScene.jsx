@@ -45,6 +45,8 @@ uColor6: { value: new THREE.Color(0xE6FFFF) }, // White core
 };
 // --- PHYSICS CLASSES ---
 
+const aspect = window.innerWidth / window.innerHeight;
+
 class Observer {
   constructor() {
     this.position = new THREE.Vector3(0, 0, 0);
@@ -173,7 +175,7 @@ const BlackHoleSimulation = () => {
     
     const camera = new THREE.PerspectiveCamera(90, width / height, 1, 8000);
     const renderer = new THREE.WebGLRenderer();
-    const aspect = width / height;
+    
     console.log(aspect);
     if (aspect < 1.0) {
       renderer.setPixelRatio( 0.9);
@@ -200,11 +202,17 @@ const BlackHoleSimulation = () => {
 
     // Load Textures
     const texLoader = new THREE.TextureLoader();
+    if (aspect < 1.0) {
+      var path = "/img/gradient3.png";
+    }
+    else{
+      path = "/img/gradient7.png";
+    }
     const textures = {
       galaxy: texLoader.load("/img/gradient7.png"), // Ensure these files exist in public/img/
       spectra: texLoader.load("/img/spectra.png"),
       moon: texLoader.load("/img/berserk.jpg"),
-      accretion_disk: texLoader.load("/img/gradient15.png"),
+      accretion_disk: texLoader.load(path),
       stars: texLoader.load("/img/stars1.png"),
     };
     
