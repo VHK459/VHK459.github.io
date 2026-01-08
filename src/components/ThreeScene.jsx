@@ -203,10 +203,12 @@ const BlackHoleSimulation = () => {
     // Load Textures
     const texLoader = new THREE.TextureLoader();
     if (aspect < 1.0) {
-      var path = "/img/gradient3.png";
+      var path = "/img/gradient13.png";
+      var strength = 0.2;
     }
     else{
-      path = "/img/gradient7.png";
+      path = "/img/gradient15.png";
+      strength = 0.1;
     }
     const textures = {
       galaxy: texLoader.load("/img/gradient7.png"), // Ensure these files exist in public/img/
@@ -269,7 +271,7 @@ const BlackHoleSimulation = () => {
 
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(width, height),
-      .1 , // Strength
+      strength , // Strength
       0.1, // Radius
       0.0  // Threshold
     );
