@@ -1,6 +1,6 @@
 .landing-container {
   position: fixed;
-  top: 70px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
@@ -21,22 +21,33 @@
   text-align: center;
   z-index: 10;
   pointer-events: none;
+  padding: 3rem 2rem;
+  background: rgba(10, 10, 15, 0.2);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  max-width: 90vw;
 }
 
 .landing-title {
-  font-size: 4rem;
+  font-size: clamp(2.5rem, 8vw, 5rem);
   font-weight: 700;
   color: var(--color-text-primary);
   margin: 0;
-  text-shadow: 0 2px 20px var(--color-glow);
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
   animation: fadeInUp 1s ease-out;
+  letter-spacing: -0.02em;
 }
 
 .landing-subtitle {
-  font-size: 1.5rem;
+  font-size: clamp(1rem, 3vw, 1.5rem);
   color: var(--color-text-secondary);
   margin-top: 1rem;
   animation: fadeInUp 1s ease-out 0.3s backwards;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 300;
 }
 
 @keyframes fadeInUp {

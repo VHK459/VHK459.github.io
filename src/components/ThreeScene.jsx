@@ -5,8 +5,8 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
-import Stats from "stats.js";
-import * as dat from "dat.gui";
+// import Stats from "stats.js";
+// import * as dat from "dat.gui";
 import Mustache from "mustache";
 import vertexShader from '../shaders/vertex.glsl?raw';
 import raytracerTemplate from '../shaders/raytracer.glsl?raw';
@@ -91,7 +91,7 @@ class Observer {
       // console.log(angle)
       const s = Math.sin(angle), c = Math.cos(angle);
 
-      this.position.set(c * r, s * r, 1);
+      this.position.set(c * r, s * r, .0);
       this.velocity.set(-s * v, c * v, 0);
 
       const degToRad = (a) => (Math.PI * a) / 180.0;
@@ -188,10 +188,10 @@ const BlackHoleSimulation = () => {
     renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
 
-    const stats = new Stats();
-    stats.domElement.style.position = "absolute";
-    stats.domElement.style.top = "0px";
-    container.appendChild(stats.domElement);
+    // const stats = new Stats();
+    // stats.domElement.style.position = "absolute";
+    // stats.domElement.style.top = "0px";
+    // container.appendChild(stats.domElement);
 
     const observer = new Observer();
     observerRef.current = observer;
@@ -203,8 +203,8 @@ const BlackHoleSimulation = () => {
     // Load Textures
     const texLoader = new THREE.TextureLoader();
     if (aspect < 1.0) {
-      var path = "/img/gradient13.png";
-      var strength = 0.2;
+      var path = "/img/gradient.png";
+      var strength = 0.1;
     }
     else{
       path = "/img/gradient15.png";
@@ -227,6 +227,7 @@ const BlackHoleSimulation = () => {
     const uniforms = {
       time: { value: 0 },
       resolution: { value: new THREE.Vector2(width, height) },
+      // mouse: { value: new THREE.Vector2(0.5, 0.5) },
       cam_pos: { value: new THREE.Vector3() },
       cam_x: { value: new THREE.Vector3() },
       cam_y: { value: new THREE.Vector3() },
@@ -281,12 +282,12 @@ const BlackHoleSimulation = () => {
     ditherPass.uniforms["uResolution"].value.set(width, height);
     composer.addPass(ditherPass);
 
-    // GUI Setup
-    const gui = new dat.GUI({ autoPlace: false });
-    gui.domElement.style.position = "absolute";
-    gui.domElement.style.top = "0px";
-    gui.domElement.style.right = "0px";
-    container.appendChild(gui.domElement);
+    // // GUI Setup
+    // const gui = new dat.GUI({ autoPlace: false });
+    // gui.domElement.style.position = "absolute";
+    // gui.domElement.style.top = "150px";
+    // gui.domElement.style.right = "0px";
+    // container.appendChild(gui.domElement);
 
     // const setupGUI = () => {
     //     const p = shaderMgr.parameters;
@@ -312,9 +313,13 @@ const BlackHoleSimulation = () => {
     //     // Add other GUI params here...
     // };
     // setupGUI();
-
-    // --- HELPER FUNCTIONS ---
-
+// const updateShader =
+//     // --- HELPER FUNCTIONS ---
+const updateShader = () => {
+            material.fragmentShader = shaderMgr.compile();
+            material.needsUpdate = true;
+            shaderMgr.needsUpdate = true;
+        };
     const updateCamera = () => {
         const m = camera.matrixWorldInverse.elements;
         let camera_matrix;
@@ -378,6 +383,9 @@ const BlackHoleSimulation = () => {
         return Math.sqrt(sum);
     };
 
+ 
+
+
     const animate = () => {
         reqId = requestAnimationFrame(animate);
         
@@ -403,11 +411,17 @@ const BlackHoleSimulation = () => {
             lastCameraMat.copy(camera.matrixWorldInverse);
         }
         
-        stats.update();
+        // stats.update();
     };
 
     // Start loop
     animate();
+
+    // Mouse Tracking
+  
+
+    // Performance: Pause on tab blur
+    
 
     // Resize Handler
     const handleResize = () => {
@@ -421,13 +435,44 @@ const BlackHoleSimulation = () => {
         ditherPass.uniforms["uResolution"].value.set(w, h);
     };
     window.addEventListener("resize", handleResize);
+    
+    const handleMouseMove = (event) => {
+      shaderMgr.parameters.observer.orbital_inclination = -(event.clientX / window.innerWidth) * 29.0 + 10.;
+      shaderMgr.parameters.observer.distance = (event.clientY / window.innerHeight + 1.) * 35.0;
+      updateShader();
+    }
+    window.addEventListener("mousemove", handleMouseMove);
+
+    // Touch handlers for mobile
+    const handleTouchMove = (event) => {
+      if (event.touches.length > 0) {
+        const touch = event.touches[0];
+        shaderMgr.parameters.observer.orbital_inclination = -(touch.clientX / window.innerWidth) * 29.0 + 10.;
+        shaderMgr.parameters.observer.distance = (touch.clientY / window.innerHeight + 1.) * 35.0;
+        updateShader();
+      }
+    }
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+
+    const handleTouchStart = (event) => {
+      if (event.touches.length > 0) {
+        const touch = event.touches[0];
+        shaderMgr.parameters.observer.orbital_inclination = -(touch.clientX / window.innerWidth) * 29.0 + 10.;
+        shaderMgr.parameters.observer.distance = (touch.clientY / window.innerHeight + 1.) * 35.0;
+        updateShader();
+      }
+    }
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
 
     // --- CLEANUP ---
     return () => {
       cancelAnimationFrame(reqId);
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchstart", handleTouchStart);
       cameraControls.dispose();
-      gui.destroy();
+      // gui.destroy();
       renderer.dispose();
       // Remove elements appended to container
       if (container) container.innerHTML = ""; 

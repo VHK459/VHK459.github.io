@@ -1,8 +1,14 @@
+import { useNavigate } from 'react-router-dom';
 import './About.css';
 
 const About = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="about-container">
+      <button className="close-button" onClick={() => navigate('/')} aria-label="Close">
+        ×
+      </button>
       <div className="about-content">
         <div className="grid-section hero-section">
           <h1 className="section-title">About This Project</h1>
