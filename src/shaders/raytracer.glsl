@@ -60,7 +60,7 @@ mat3 BG_COORDS = ROT_Y(45.0 * DEG_TO_RAD);
 const float PLANET_AXIAL_TILT = 30.0 * DEG_TO_RAD;
 mat3 PLANET_COORDS = ROT_Y(PLANET_AXIAL_TILT);
 
-const float FOV_ANGLE_DEG = 90.0;
+const float FOV_ANGLE_DEG = 20.0;
 float FOV_MULT = 1.0 / tan(DEG_TO_RAD * FOV_ANGLE_DEG*0.5);
 
 // derived "constants" (from uniforms)
@@ -194,38 +194,10 @@ vec4 planet_intersection(vec3 old_pos, vec3 ray, float t, float dt,
 vec4 galaxy_color(vec2 tex_coord, float doppler_factor) {
 
     vec4 color = texture2D(galaxy_texture, tex_coord);
-    // {{^observerMotion}}
-    // return color;
-    // {{/observerMotion}}
+    
+    return color;
+    
 
-    // {{#observerMotion}}
-    vec4 ret = vec4(0.0, 0.0, 0.0, 0.0);
-    float red = max(0.0, color.r - color.g);
-
-    const float H_ALPHA_RATIO = 0.1;
-    const float TEMPERATURE_BIAS = 0.95;
-
-    color.r -= red*H_ALPHA_RATIO;
-
-    float i1 = max(color.r, max(color.g, color.b));
-    float ratio = (color.g+color.b) / color.r;
-
-    if (i1 > 0.0 && color.r > 0.0) {
-
-        float temperature = TEMPERATURE_LOOKUP(ratio) * TEMPERATURE_BIAS;
-        color = BLACK_BODY_COLOR(temperature);
-
-        float i0 = max(color.r, max(color.g, color.b));
-        if (i0 > 0.0) {
-            temperature /= doppler_factor;
-            ret = BLACK_BODY_COLOR(temperature) * max(i1/i0,0.0);
-        }
-    }
-
-    ret += SINGLE_WAVELENGTH_COLOR(656.28 * doppler_factor) * red / 0.214 * H_ALPHA_RATIO;
-
-    return ret;
-    // {{/observerMotion}}
 }
 
 void main() {

@@ -47,7 +47,7 @@ uColor6: { value: new THREE.Color(0xE6FFFF) }, // White core
 
 class Observer {
   constructor() {
-    this.position = new THREE.Vector3(10, 10, 0);
+    this.position = new THREE.Vector3(0, 0, 0);
     this.velocity = new THREE.Vector3(0, 0, 0);
     this.orientation = new THREE.Matrix3();
     this.time = 0.0;
@@ -113,7 +113,7 @@ class ShaderManager {
     this.template = mustacheTemplate;
     this.parameters = {
       n_steps: 100,
-      quality: "fast",
+      quality: "medium",
       accretion_disk: true,
       planet: { enabled: true, distance: 7.0, radius: 0.4 },
       lorentz_contraction: true,
@@ -130,6 +130,10 @@ class ShaderManager {
       observerMotion: function () {
         return this.observer.motion;
       },
+      camera: {
+        cinematic: true,
+        roll: 0.0
+      }
     };
     this.needsUpdate = true;
   }
@@ -165,9 +169,9 @@ const BlackHoleSimulation = () => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
     
-    const camera = new THREE.PerspectiveCamera(45, width / height, 1, 80000);
+    const camera = new THREE.PerspectiveCamera(45, width / height, 1, 8000);
     const renderer = new THREE.WebGLRenderer();
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(0.6); // Limit pixel ratio for performance
     renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
 
@@ -186,7 +190,7 @@ const BlackHoleSimulation = () => {
     // Load Textures
     const texLoader = new THREE.TextureLoader();
     const textures = {
-      galaxy: texLoader.load("/img/milkyway.png"), // Ensure these files exist in public/img/
+      galaxy: texLoader.load("/img/gradient7.png"), // Ensure these files exist in public/img/
       spectra: texLoader.load("/img/spectra.png"),
       moon: texLoader.load("/img/berserk.jpg"),
       accretion_disk: texLoader.load("/img/gradient15.png"),
@@ -231,7 +235,7 @@ const BlackHoleSimulation = () => {
 
     // Camera Init Logic
     const initializeCamera = () => {
-      const pitchAngle = 10.0, yawAngle = 0.0;
+      const pitchAngle = 0.0, yawAngle = 0.0;
       camera.matrixWorldInverse.makeRotationX(degToRad(-pitchAngle));
       camera.matrixWorldInverse.multiply(new THREE.Matrix4().makeRotationY(degToRad(-yawAngle)));
       const m = camera.matrixWorldInverse.elements;
@@ -246,7 +250,7 @@ const BlackHoleSimulation = () => {
 
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(width, height),
-      0.1 , // Strength
+      .1 , // Strength
       0.1, // Radius
       0.0  // Threshold
     );
@@ -293,7 +297,7 @@ const BlackHoleSimulation = () => {
     const updateCamera = () => {
         const m = camera.matrixWorldInverse.elements;
         let camera_matrix;
-
+        // console.log(m);
         if (shaderMgr.parameters.observer.motion) {
             camera_matrix = new THREE.Matrix3();
         } else {
@@ -305,9 +309,13 @@ const BlackHoleSimulation = () => {
             m[8], m[9], m[10],
             m[4], m[5], m[6]
         );
+        // camera_matrix.set(1, 0, 0, 0, 0, 1, 0, 1, 0);
+
+        // console.log(camera_matrix);
 
         if (shaderMgr.parameters.observer.motion) {
             observer.orientation = observer.orbitalFrame().multiply(camera_matrix);
+            // console.log(observer.orientation);
         } else {
             const p = new THREE.Vector3(m[6], m[7], m[8]);
             const dist = shaderMgr.parameters.observer.distance;
