@@ -47,8 +47,8 @@ uColor6: { value: new THREE.Color(0xE6FFFF) }, // White core
 
 class Observer {
   constructor() {
-    this.position = new THREE.Vector3(10, 0, 0);
-    this.velocity = new THREE.Vector3(1, 0, 0);
+    this.position = new THREE.Vector3(10, 10, 0);
+    this.velocity = new THREE.Vector3(0, 0, 0);
     this.orientation = new THREE.Matrix3();
     this.time = 0.0;
   }
@@ -113,7 +113,7 @@ class ShaderManager {
     this.template = mustacheTemplate;
     this.parameters = {
       n_steps: 100,
-      quality: "low",
+      quality: "fast",
       accretion_disk: true,
       planet: { enabled: true, distance: 7.0, radius: 0.4 },
       lorentz_contraction: true,
@@ -131,7 +131,7 @@ class ShaderManager {
         return this.observer.motion;
       },
     };
-    this.needsUpdate = false;
+    this.needsUpdate = true;
   }
 
   hasMovingParts() {
@@ -189,7 +189,7 @@ const BlackHoleSimulation = () => {
       galaxy: texLoader.load("/img/milkyway.png"), // Ensure these files exist in public/img/
       spectra: texLoader.load("/img/spectra.png"),
       moon: texLoader.load("/img/berserk.jpg"),
-      accretion_disk: texLoader.load("/img/gradient14.png"),
+      accretion_disk: texLoader.load("/img/gradient15.png"),
       stars: texLoader.load("/img/stars1.png"),
     };
     
