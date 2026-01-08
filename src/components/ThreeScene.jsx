@@ -203,8 +203,8 @@ const BlackHoleSimulation = () => {
     // Load Textures
     const texLoader = new THREE.TextureLoader();
     if (aspect < 1.0) {
-      var path = "/img/gradient.png";
-      var strength = 0.1;
+      var path = "/img/accretion-disk.png";
+      var strength = 0.2;
     }
     else{
       path = "/img/gradient15.png";
