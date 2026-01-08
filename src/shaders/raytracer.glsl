@@ -216,6 +216,7 @@ void main() {
     p.y *= resolution.y / resolution.x;
 
     vec3 pos = cam_pos;
+    // vec3 pos = vec3(0.0, 0.0, 0.0);
     vec3 ray = normalize(p.x*cam_x + p.y*cam_y + FOV_MULT*cam_z);
 
     // {{#aberration}}

@@ -79,15 +79,17 @@ class Observer {
   move(dt, shaderParams) {
     dt *= shaderParams.time_scale;
     let r, v = 0;
-
+    // console.log(shaderParams.observer.motion);
     if (shaderParams.observer.motion) {
       r = shaderParams.observer.distance;
+      
       v = 1.0 / Math.sqrt(2.0 * (r - 1.0));
       const ang_vel = v / r;
       const angle = this.time * ang_vel;
+      // console.log(angle)
       const s = Math.sin(angle), c = Math.cos(angle);
 
-      this.position.set(c * r, s * r, 0);
+      this.position.set(c * r, s * r, 1);
       this.velocity.set(-s * v, c * v, 0);
 
       const degToRad = (a) => (Math.PI * a) / 180.0;
@@ -123,7 +125,7 @@ class ShaderManager {
       doppler_shift: true,
       light_travel_time: true,
       time_scale: 5.0,
-      observer: { motion: true, distance: 30, orbital_inclination: -5 },
+      observer: { motion: true, distance: 30, orbital_inclination: -1.0 },
       planetEnabled: function () {
         return this.planet.enabled && this.quality !== "fast";
       },
@@ -169,7 +171,7 @@ const BlackHoleSimulation = () => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
     
-    const camera = new THREE.PerspectiveCamera(45, width / height, 1, 8000);
+    const camera = new THREE.PerspectiveCamera(90, width / height, 1, 8000);
     const renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio(0.6); // Limit pixel ratio for performance
     renderer.setSize(width, height);
@@ -202,7 +204,7 @@ const BlackHoleSimulation = () => {
     textures.galaxy.minFilter = THREE.NearestFilter;
 
     // Geometry & Material
-    const geometry = new THREE.PlaneGeometry(3, 3);
+    const geometry = new THREE.PlaneGeometry(2, 2);
     const uniforms = {
       time: { value: 0 },
       resolution: { value: new THREE.Vector2(width, height) },
@@ -219,7 +221,7 @@ const BlackHoleSimulation = () => {
       planet_texture: { value: textures.moon },
       spectrum_texture: { value: textures.spectra },
     };
-
+// console.log(uniforms)
     const material = new THREE.ShaderMaterial({
       uniforms: uniforms,
       vertexShader: vertexShader,
@@ -267,30 +269,30 @@ const BlackHoleSimulation = () => {
     gui.domElement.style.right = "0px";
     container.appendChild(gui.domElement);
 
-    const setupGUI = () => {
-        const p = shaderMgr.parameters;
-        const updateShader = () => {
-            material.fragmentShader = shaderMgr.compile();
-            material.needsUpdate = true;
-            shaderMgr.needsUpdate = true;
-        };
+    // const setupGUI = () => {
+    //     const p = shaderMgr.parameters;
+    //     const updateShader = () => {
+    //         material.fragmentShader = shaderMgr.compile();
+    //         material.needsUpdate = true;
+    //         shaderMgr.needsUpdate = true;
+    //     };
 
-        gui.add(p, 'quality', ['fast', 'medium', 'high']).onChange((val) => {
-            switch(val) {
-                case 'fast': p.n_steps = 40; break;
-                case 'medium': p.n_steps = 100; break;
-                case 'high': p.n_steps = 200; break;
-            }
-            updateShader();
-        });
+    //     gui.add(p, 'quality', ['fast', 'medium', 'high']).onChange((val) => {
+    //         switch(val) {
+    //             case 'fast': p.n_steps = 40; break;
+    //             case 'medium': p.n_steps = 100; break;
+    //             case 'high': p.n_steps = 200; break;
+    //         }
+    //         updateShader();
+    //     });
         
-        const folderOb = gui.addFolder('Observer');
-        folderOb.add(p.observer, 'motion').onChange(updateShader);
-        folderOb.add(p.observer, 'distance', 1.5, 30).onChange(() => {}); // camera updates in loop
-        folderOb.open();
-        // Add other GUI params here...
-    };
-    setupGUI();
+    //     const folderOb = gui.addFolder('Observer');
+    //     folderOb.add(p.observer, 'motion').onChange(updateShader);
+    //     folderOb.add(p.observer, 'distance', 1.5, 30).onChange(() => {}); // camera updates in loop
+    //     folderOb.open();
+    //     // Add other GUI params here...
+    // };
+    // setupGUI();
 
     // --- HELPER FUNCTIONS ---
 
@@ -315,7 +317,7 @@ const BlackHoleSimulation = () => {
 
         if (shaderMgr.parameters.observer.motion) {
             observer.orientation = observer.orbitalFrame().multiply(camera_matrix);
-            // console.log(observer.orientation);
+            // console.log(observer.orbitalFrame());
         } else {
             const p = new THREE.Vector3(m[6], m[7], m[8]);
             const dist = shaderMgr.parameters.observer.distance;
@@ -337,6 +339,7 @@ const BlackHoleSimulation = () => {
         uniforms.cam_vel.value.copy(observer.velocity);
         
         const e = observer.orientation.elements;
+        console.log(e)
         uniforms.cam_x.value.set(e[0], e[1], e[2]);
         uniforms.cam_y.value.set(e[3], e[4], e[5]);
         uniforms.cam_z.value.set(e[6], e[7], e[8]);
@@ -412,7 +415,8 @@ const BlackHoleSimulation = () => {
     };
   }, []); // Empty dependency array = run once on mount
 
-  return <div ref={mountRef} style={{ width: "100%", height: "100vh", overflow: "hidden" }} />;
+  return <div ref={mountRef} style={{ width: "100%", height: "100vh", overflow: "hidden" ,  pointerEvents: "none",
+    touchAction: "none"}} />;
 };
 
 export default BlackHoleSimulation;
