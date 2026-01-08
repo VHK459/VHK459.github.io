@@ -1,6 +1,7 @@
 {
   "name": "new-web-test",
-  "private": true,
+  "homepage": "https://VHK459.github.io",
+  "private": false,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
