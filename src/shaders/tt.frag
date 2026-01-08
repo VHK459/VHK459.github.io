@@ -1,78 +1,63 @@
-precision mediump float;
+precision lowp float;
+
 uniform sampler2D tDiffuse;
 uniform vec2 uResolution;
 
-// --- 5 Colors Palette ---
-uniform vec3 uColor1; // Darkest
+// --- 6 Colors Palette ---
+uniform vec3 uColor1;
 uniform vec3 uColor2;
 uniform vec3 uColor3;
 uniform vec3 uColor4;
-uniform vec3 uColor5; 
-uniform vec3 uColor6; // Brightest
+uniform vec3 uColor5;
+uniform vec3 uColor6;
 
 varying vec2 vUv;
 
-// Helper function to select color based on index (0 to 4)
-vec4 getPaletteColor(float index) {
-    if (index <= 0.0) return vec4(uColor1, 1.0);
-    if (index <= 1.0) return vec4(uColor2, 1.0);
-    if (index <= 2.0) return vec4(uColor3, 1.0);
-    if (index <= 3.0) return vec4(uColor4, 1.0);
-    if (index <= 4.0) return vec4(uColor5, 1.0);
-    return vec4(uColor6, 1.0);
+// -------- Palette lookup (branchless) --------
+vec3 palette(float i) {
+    i = clamp(i, 0.0, 5.0);
+
+    vec3 c = uColor1;
+    c = mix(c, uColor2, step(1.0, i));
+    c = mix(c, uColor3, step(2.0, i));
+    c = mix(c, uColor4, step(3.0, i));
+    c = mix(c, uColor5, step(4.0, i));
+    c = mix(c, uColor6, step(5.0, i));
+
+    return c;
 }
 
-// Returns the threshold value (0.0 - 1.0) from the Bayer Matrix
-float getBayerLimit(vec2 position) {
-    int x = int(mod(position.x, 4.0));
-    int y = int(mod(position.y, 4.0));
-    int index = x + y * 4;
-    float limit = 0.0;
+// -------- 4x4 Bayer matrix (branchless) --------
+float bayer4x4(vec2 p) {
+    vec2 f = mod(p, 4.0);
+    int x = int(f.x);
+    int y = int(f.y);
 
-    if (index == 0) limit = 0.0625;
-    else if (index == 1) limit = 0.5625;
-    else if (index == 2) limit = 0.1875;
-    else if (index == 3) limit = 0.6875;
-    else if (index == 4) limit = 0.8125;
-    else if (index == 5) limit = 0.3125;
-    else if (index == 6) limit = 0.9375;
-    else if (index == 7) limit = 0.4375;
-    else if (index == 8) limit = 0.25;
-    else if (index == 9) limit = 0.75;
-    else if (index == 10) limit = 0.125;
-    else if (index == 11) limit = 0.625;
-    else if (index == 12) limit = 1.0;
-    else if (index == 13) limit = 0.5;
-    else if (index == 14) limit = 0.875;
-    else if (index == 15) limit = 0.375;
+    // Flattened Bayer matrix (row-major)
+    float m[16];
+    m[0]  = 0.0625;  m[1]  = 0.5625;  m[2]  = 0.1875;  m[3]  = 0.6875;
+    m[4]  = 0.8125;  m[5]  = 0.3125;  m[6]  = 0.9375;  m[7]  = 0.4375;
+    m[8]  = 0.25;    m[9]  = 0.75;    m[10] = 0.125;  m[11] = 0.625;
+    m[12] = 1.0;     m[13] = 0.5;     m[14] = 0.875;  m[15] = 0.375;
 
-    return limit;
+    return m[x + y * 4];
 }
 
 void main() {
-    vec4 color = texture2D(tDiffuse, vUv);
+    vec3 color = texture2D(tDiffuse, vUv).rgb;
 
-    // 1. Calculate Luminance
-    float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+    // Luminance
+    float gray = dot(color, vec3(0.299, 0.587, 0.114));
 
-    // 2. Scale Grayscale to 0..4 range (since we have 5 colors)
-    // For 5 colors, we have 4 intervals between them.
+    // Scale to palette range
     float scaled = gray * 5.0;
 
-    // 3. Get Dither Threshold
-    vec2 pixelCoord = gl_FragCoord.xy;
-    float limit = getBayerLimit(pixelCoord);
+    // Bayer threshold
+    float threshold = bayer4x4(gl_FragCoord.xy);
 
-    // 4. Quantize
-    // We determine the base color index (floor) and the next color index (ceil).
-    // If the fractional part of the scaled value is greater than the dither limit,
-    // we "round up" to the next color. This creates the dithering effect.
-    float index = floor(scaled);
-    
-    if (fract(scaled) > limit) {
-        index += 1.0;
-    }
+    // Dithered quantization
+    float index = floor(scaled + step(threshold, fract(scaled)));
 
-    // 5. Map index to actual color
-    gl_FragColor = vec4(getPaletteColor(index));
+    // Output
+    gl_FragColor = vec4(palette(index), 1.0);
 }

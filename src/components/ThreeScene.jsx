@@ -190,7 +190,7 @@ const BlackHoleSimulation = () => {
       spectra: texLoader.load("/img/spectra.png"),
       moon: texLoader.load("/img/berserk.jpg"),
       accretion_disk: texLoader.load("/img/gradient14.png"),
-      stars: texLoader.load("/img/dark.png"),
+      stars: texLoader.load("/img/stars1.png"),
     };
     
     // Set filters
