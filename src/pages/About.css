@@ -1,0 +1,151 @@
+.about-container {
+  min-height: 100vh;
+  background: #0a0a0a;
+  padding-top: 70px;
+  overflow-y: auto;
+}
+
+.about-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+.hero-section {
+  margin-bottom: 3rem;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  border: 2px solid #333;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 3rem;
+  color: #fff;
+  margin: 0 0 1rem 0;
+  font-weight: 700;
+}
+
+.section-text {
+  font-size: 1.3rem;
+  color: #4a9eff;
+  margin: 0;
+}
+
+.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.grid-item {
+  background: #1a1a1a;
+  border: 2px solid #333;
+  border-radius: 8px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.grid-item:hover {
+  transform: translateY(-5px);
+  border-color: #4a9eff;
+  box-shadow: 0 8px 20px rgba(74, 158, 255, 0.2);
+}
+
+.grid-item h2 {
+  color: #4a9eff;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.grid-item p {
+  color: #ccc;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.grid-item ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #ccc;
+}
+
+.grid-item li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #333;
+}
+
+.grid-item li:last-child {
+  border-bottom: none;
+}
+
+.grid-item li:before {
+  content: "▹";
+  color: #4a9eff;
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
+.contact-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.btn-primary {
+  background: #4a9eff;
+  color: #fff;
+  border-color: #4a9eff;
+}
+
+.btn-primary:hover {
+  background: #3a8eef;
+  transform: scale(1.05);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #4a9eff;
+  border-color: #4a9eff;
+}
+
+.btn-secondary:hover {
+  background: rgba(74, 158, 255, 0.1);
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .grid-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-buttons {
+    flex-direction: column;
+  }
+}
