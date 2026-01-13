@@ -24,7 +24,7 @@ const Landing = () => {
         <div className="shader-loader">
           <div className="loader-content">
             <div className="loader-spinner"></div>
-            <div className="loader-text">Initializing Shader</div>
+            <div className="loader-text">Initializing </div>
           </div>
         </div>
       )}

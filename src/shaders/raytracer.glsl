@@ -108,25 +108,22 @@ vec4 planet_intersection(vec3 old_pos, vec3 ray, float t, float dt,
 
     vec3 planet_dir = vec3(planet_pos0.y, -planet_pos0.x, 0.0) / PLANET_DISTANCE;
 
-    // {{#light_travel_time}}
+    
     float planet_ang1 = (t-dt) * PLANET_ORBITAL_ANG_VEL;
     vec3 planet_pos1 = vec3(cos(planet_ang1), sin(planet_ang1), 0)*PLANET_DISTANCE;
     vec3 planet_vel = (planet_pos1-planet_pos0)/dt;
 
     // transform to moving planet coordinate system
     ray = ray - planet_vel;
-    // {{/light_travel_time}}
-    // {{^light_travel_time}}
-    // vec3 planet_vel = planet_dir * PLANET_ORBITAL_ANG_VEL * PLANET_DISTANCE;
-    // {{/light_travel_time}}
+ 
 
     // ray-sphere intersection
     vec3 d = old_pos - planet_pos0;
 
-    // {{#lorentz_contraction}}
+    
     ray = contract(ray, planet_dir, PLANET_GAMMA);
     d = contract(d, planet_dir, PLANET_GAMMA);
-    // {{/lorentz_contraction}}
+    
 
     float dotp = dot(d,ray);
     float c_coeff = dot(d,d) - SQ(PLANET_RADIUS);
@@ -137,9 +134,9 @@ vec4 planet_intersection(vec3 old_pos, vec3 ray, float t, float dt,
     float isec_t = (-dotp - sqrt(discr)) / ray2;
 
     float MIN_ISEC_DT = 0.0;
-    // {{#lorentz_contraction}}
+    
     MIN_ISEC_DT = -dt;
-    // {{/lorentz_contraction}}
+    
 
     if (isec_t < MIN_ISEC_DT || isec_t > dt) return ret;
 
@@ -150,22 +147,22 @@ vec4 planet_intersection(vec3 old_pos, vec3 ray, float t, float dt,
     vec3 light_dir = planet_pos0;
     float rot_phase = t;
 
-    // {{#light_travel_time}}
+    
     light_dir += planet_vel*isec_t*dt;
     rot_phase -= isec_t*dt;
-    // {{/light_travel_time}}
+    
 
     rot_phase = rot_phase * PLANET_ROTATION_ANG_VEL*0.5/M_PI;
     light_dir = light_dir / PLANET_DISTANCE;
 
-    // {{#light_travel_time}}
+    
     light_dir = light_dir - planet_vel;
-    // {{/light_travel_time}}
+    
 
     vec3 surface_normal = surface_point;
-    // {{#lorentz_contraction}}
+    
     light_dir = contract(light_dir, planet_dir, PLANET_GAMMA);
-    // {{/lorentz_contraction}}
+    
     light_dir = normalize(light_dir);
 
     vec2 tex_coord = sphere_map(surface_point * PLANET_COORDS);
@@ -176,13 +173,12 @@ vec4 planet_intersection(vec3 old_pos, vec3 ray, float t, float dt,
         PLANET_LIGHTNESS;
 
     float light_temperature = ACCRETION_TEMPERATURE;
-    // {{#doppler_shift}}
+    
     float doppler_factor = SQ(PLANET_GAMMA) *
         (1.0 + dot(planet_vel, light_dir)) *
         (1.0 - dot(planet_vel, normalize(ray)));
     light_temperature /= doppler_factor * ray_doppler_factor;
-    // {{/doppler_shift}}
-
+    
     vec4 light_color = BLACK_BODY_COLOR(light_temperature);
     ret = texture2D(planet_texture, tex_coord) * lightness * light_color;
     if (isec_t < 0.0) isec_t = 0.5;
@@ -202,7 +198,7 @@ vec4 galaxy_color(vec2 tex_coord, float doppler_factor) {
 
 void main() {
 
-    // {{#planetEnabled}}
+    
     // "constants" derived from uniforms
     PLANET_RADIUS = planet_radius;
     PLANET_DISTANCE = max(planet_distance,planet_radius+1.5);
@@ -210,30 +206,28 @@ void main() {
     float MAX_PLANET_ROT = max((1.0 + PLANET_ORBITAL_ANG_VEL*PLANET_DISTANCE) / PLANET_RADIUS,0.0);
     PLANET_ROTATION_ANG_VEL = -PLANET_ORBITAL_ANG_VEL + MAX_PLANET_ROT * 0.5;
     PLANET_GAMMA = 1.0/sqrt(1.0-SQ(PLANET_ORBITAL_ANG_VEL*PLANET_DISTANCE));
-    // {{/planetEnabled}}
+    
 
     vec2 p = -1.0 + 2.0 * gl_FragCoord.xy / resolution.xy;
     p.y *= resolution.y / resolution.x;
 
     vec3 pos = cam_pos;
-    // vec3 pos = vec3(0.0, 0.0, 0.0);
+    
     vec3 ray = normalize(p.x*cam_x + p.y*cam_y + FOV_MULT*cam_z);
 
-    // {{#aberration}}
+    
     ray = lorentz_velocity_transformation(ray, cam_vel);
-    // {{/aberration}}
-
+    
     float ray_intensity = 1.0;
     float ray_doppler_factor = 1.0;
 
     float gamma = 1.0/sqrt(1.0-dot(cam_vel,cam_vel));
     ray_doppler_factor = gamma*(1.0 + dot(ray,-cam_vel));
-    // {{#beaming}}
+    
     ray_intensity /= ray_doppler_factor*ray_doppler_factor*ray_doppler_factor;
-    // {{/beaming}}
-    // {{^doppler_shift}}
+    
     ray_doppler_factor = 1.0;
-    // {{/doppler_shift}}
+    
 
     float step = 0.01;
     vec4 color = vec4(0.0,0.0,0.0,1.0);
@@ -252,11 +246,10 @@ void main() {
     float t = time;
     float dt = 1.0;
 
-    // {{^light_travel_time}}
+    
     float planet_ang0 = t * PLANET_ORBITAL_ANG_VEL;
     vec3 planet_pos0 = vec3(cos(planet_ang0), sin(planet_ang0), 0)*PLANET_DISTANCE;
-    // {{/light_travel_time}}
-
+    
     vec3 old_pos;
 
     for (int j=0; j < NSTEPS; j++) {
@@ -270,12 +263,9 @@ void main() {
 
         old_u = u;
 
-        // {{#light_travel_time}}
-        // {{#gravitational_time_dilation}}
+        
         dt = sqrt(du*du + u*u*(1.0-u))/(u*u*(1.0-u))*step;
-        // {{/gravitational_time_dilation}}
-        // {{/light_travel_time}}
-
+        
         // Leapfrog scheme
         u += du*step;
         float ddu = -u*(1.0 - 1.5*u*u);
@@ -292,17 +282,12 @@ void main() {
         float solid_isec_t = 2.0;
         float ray_l = length(ray);
 
-        // {{#light_travel_time}}
-        // {{#gravitational_time_dilation}}
+        
         float mix = smooth_step(1.0/u, 8.0);
         dt = mix*ray_l + (1.0-mix)*dt;
-        // {{/gravitational_time_dilation}}
-        // {{^gravitational_time_dilation}}
+        
         dt = ray_l;
-        // {{/gravitational_time_dilation}}
-        // {{/light_travel_time}}
-
-        // {{#planetEnabled}}
+        
         if (
             (
                 old_pos.z * pos.z < 0.0 ||
@@ -312,11 +297,10 @@ void main() {
             min(u, old_u) < 1.0/(PLANET_DISTANCE-PLANET_RADIUS)
         ) {
 
-            // {{#light_travel_time}}
+            
             float planet_ang0 = t * PLANET_ORBITAL_ANG_VEL;
             vec3 planet_pos0 = vec3(cos(planet_ang0), sin(planet_ang0), 0)*PLANET_DISTANCE;
-            // {{/light_travel_time}}
-
+            
             vec4 planet_isec = planet_intersection(old_pos, ray, t, dt,
                     planet_pos0, ray_doppler_factor);
             if (planet_isec.w > 0.0) {
@@ -325,9 +309,7 @@ void main() {
                 color += planet_isec;
             }
         }
-        // {{/planetEnabled}}
-
-        // {{#accretion_disk}}
+        
         if (old_pos.z * pos.z < 0.0) {
             // crossed plane z=0
 
@@ -350,12 +332,11 @@ void main() {
                     vec3 accretion_v = vec3(-isec.y, isec.x, 0.0) / sqrt(2.0*(r-1.0)) / (r*r);
                     gamma = 1.0/sqrt(1.0-dot(accretion_v,accretion_v));
                     float doppler_factor = gamma*(1.0+dot(ray/ray_l,accretion_v));
-                    // {{#beaming}}
+                    
                     accretion_intensity /= doppler_factor*doppler_factor*doppler_factor;
-                    // {{/beaming}}
-                    // {{#doppler_shift}}
+                    
                     temperature /= ray_doppler_factor*doppler_factor;
-                    // {{/doppler_shift}}
+                   
 
                     color += texture2D(accretion_disk_texture,tex_coord)
                         * accretion_intensity
@@ -363,11 +344,9 @@ void main() {
                 }
             }
         }
-        // {{/accretion_disk}}
-
-        // {{#light_travel_time}}
+        
         t -= dt;
-        // {{/light_travel_time}}
+        
 
         if (solid_isec_t <= 1.0) u = 2.0; // break
         if (u > 1.0) break;

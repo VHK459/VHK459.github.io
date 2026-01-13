@@ -190,6 +190,22 @@
   box-shadow: 0 4px 20px var(--color-glow);
 }
 
+
+.flexboxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 0rem;
+  align-items: start;
+}
+
+
+
+.contact-buttons{
+ grid-row: 2;
+}
+
+
 @media (max-width: 768px) {
   .section-title {
     font-size: 2rem;

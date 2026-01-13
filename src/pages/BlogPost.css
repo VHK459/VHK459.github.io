@@ -1,0 +1,263 @@
+.blog-post-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(10, 10, 15, 0.95);
+  backdrop-filter: blur(40px);
+  z-index: 100;
+  overflow-y: auto;
+  padding-top: 0;
+  animation: slideIn 0.4s ease-out;
+}
+
+.blog-post-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 6rem 2rem 3rem;
+}
+
+.close-button {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background: rgba(26, 26, 36, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.5rem;
+  z-index: 101;
+}
+
+.close-button:hover {
+  background: rgba(26, 26, 36, 0.8);
+  border-color: var(--color-accent);
+  transform: translateX(-4px);
+}
+
+.blog-post-header {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.blog-post-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  color: var(--color-text-primary);
+  margin: 0 0 1.5rem 0;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.blog-post-meta {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+.blog-post-author {
+  font-weight: 500;
+}
+
+.blog-post-date {
+  opacity: 0.7;
+}
+
+.blog-post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.blog-post-tag {
+  font-size: 0.85rem;
+  color: var(--color-accent-hover);
+  background: rgba(124, 58, 237, 0.1);
+  padding: 0.35rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+.blog-post-body {
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+}
+
+.markdown-content {
+  font-size: 1.05rem;
+}
+
+.markdown-content h1 {
+  font-size: 2rem;
+  color: var(--color-text-primary);
+  margin: 2.5rem 0 1rem 0;
+  font-weight: 700;
+}
+
+.markdown-content h2 {
+  font-size: 1.6rem;
+  color: var(--color-text-primary);
+  margin: 2rem 0 1rem 0;
+  font-weight: 600;
+}
+
+.markdown-content h3 {
+  font-size: 1.3rem;
+  color: var(--color-accent-hover);
+  margin: 1.5rem 0 0.75rem 0;
+  font-weight: 600;
+}
+
+.markdown-content p {
+  margin: 1rem 0;
+  color: var(--color-text-secondary);
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.markdown-content li {
+  margin: 0.5rem 0;
+  color: var(--color-text-secondary);
+}
+
+.markdown-content code {
+  background: rgba(26, 26, 36, 0.5);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  color: var(--color-accent-hover);
+}
+
+.markdown-content pre {
+  background: rgba(26, 26, 36, 0.5);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.markdown-content pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.markdown-content strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+.markdown-content a {
+  color: var(--color-accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.markdown-content a:hover {
+  border-bottom-color: var(--color-accent);
+}
+
+/* KaTeX Math Styling */
+.markdown-content .katex {
+  font-size: 1.1em;
+}
+
+.markdown-content .katex-display {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 1rem 0;
+}
+
+.markdown-content .katex-display > .katex {
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Custom scrollbar for code blocks and math */
+.markdown-content pre::-webkit-scrollbar,
+.markdown-content .katex-display::-webkit-scrollbar {
+  height: 8px;
+}
+
+.markdown-content pre::-webkit-scrollbar-track,
+.markdown-content .katex-display::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb,
+.markdown-content .katex-display::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.5);
+  border-radius: 4px;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb:hover,
+.markdown-content .katex-display::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.7);
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb:hover,
+.markdown-content .katex-display::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.7);
+}
+
+.blog-post-footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.back-button {
+  background: rgba(26, 26, 36, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.back-button:hover {
+  background: rgba(26, 26, 36, 0.8);
+  border-color: var(--color-accent);
+  transform: translateX(-4px);
+}
+
+@media (max-width: 768px) {
+  .blog-post-content {
+    padding: 5rem 1.5rem 2rem;
+  }
+  
+  .blog-post-title {
+    font-size: 2rem;
+  }
+}
