@@ -102,7 +102,7 @@ const BlogPost = () => {
 
         <div className="blog-post-footer">
           <button onClick={() => navigate('/blogs')} className="back-button">
-            ← Back to All Posts
+            ← Back to All Possts
           </button>
         </div>
       </div>
