@@ -4536,7 +4536,7 @@ void main() {\r
     \r
     gl_FragColor = color*ray_intensity;\r
 }\r
-`,fR=`precision mediump float;\r
+`,fR=`precision highp float;\r
 \r
 uniform sampler2D tDiffuse;\r
 uniform vec2 uResolution;\r
