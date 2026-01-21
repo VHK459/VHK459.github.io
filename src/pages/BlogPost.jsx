@@ -16,7 +16,7 @@ const BlogPost = () => {
 
   useEffect(() => {
     if (post?.markdownFile) {
-      fetch(`/public/data/posts/${post.markdownFile}`)
+      fetch(`/data/posts/${post.markdownFile}`)
         .then(res => res.text())
         .then(text => {
           setMarkdown(text);
