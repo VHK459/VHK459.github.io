@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
-import { blogPosts } from '../data/blogPosts';
+import { blogPosts } from '/public/data/blogPosts';
 import './BlogPost.css';
 
 const BlogPost = () => {
@@ -16,7 +16,7 @@ const BlogPost = () => {
 
   useEffect(() => {
     if (post?.markdownFile) {
-      fetch(`/src/data/posts/${post.markdownFile}`)
+      fetch(`/public/data/posts/${post.markdownFile}`)
         .then(res => res.text())
         .then(text => {
           setMarkdown(text);
